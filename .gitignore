@@ -1,0 +1,44 @@
+# LaTeX build/artifact files
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+*.idx
+*.ind
+*.ilg
+*.inx
+*.dvi
+*.ps
+*.synctex.gz
+*.synctex
+*.fdb_latexmk
+*.auxlock
+*.bbl
+*.blg
+*.brf
+*.nav
+*.snm
+*.vrb
+*.run.xml
+*.xdv
+
+
+# Build directories
+_build/
+build/
+out/
+minted-files/
+_minted-*/
+
+# Temporary and editor files
+*~
+.DS_Store
+*.swp
+.vscode/
