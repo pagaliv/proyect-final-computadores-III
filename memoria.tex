@@ -150,13 +150,13 @@
     \rule{\linewidth}{0.5pt}
     \vspace{1.5cm}
 
-    % Imagen portada — sustituir por imagen real del montaje
+    % Imagen portada — 
     \placeholder{Fotografía del montaje final del sistema}
 
     \vfill
 
     \begin{tabular}{rl}
-        \textbf{Autor:}       & Pablo Galilea Valverde \\[4pt]
+        \textbf{Autor:}       & Pablo Galilea Valverde y Pedro Zhuhan\\[4pt]
         \textbf{Asignatura:}  & Instalación y Mantenimiento de Computadores \\[4pt]
         \textbf{Titulación:}  & Grado en Ingeniería Informática \\[4pt]
         \textbf{Fecha:}       & \today \\[4pt]
@@ -250,7 +250,7 @@ función y el nodo al que están conectados.
         HC-SR04      & Sensor    & Arduino    & Distancia por ultrasonidos (detección de fuga) \\
         Potenciómetro 1 & Sensor & Arduino    & Control manual de velocidad del ventilador \\
         Potenciómetro 2 & Sensor & Arduino    & Control manual de intensidad de iluminación \\
-        Ventilador (PWM) & Actuador & Arduino & Regulación de temperatura \\
+        Ventilador (Simulado) & Actuador & Arduino & Regulación de temperatura (realmente es un led) \\
         Tira LED     & Actuador  & Arduino    & Iluminación del terrario \\
         Botón INICIO & Entrada   & RPi 3B+    & Arranque del sistema \\
         Botón ALARMA & Entrada   & RPi 3B+    & Activación/desactivación de alarma \\
@@ -287,7 +287,7 @@ El Arduino UNO actúa como nodo sensor/actuador del sistema. Sus funciones princ
 \begin{itemize}[noitemsep]
     \item Leer el sensor de temperatura y humedad \textbf{DHT11} y el sensor de
           ultrasonidos \textbf{HC-SR04} \textbf{una vez por segundo} mediante la
-          interrupción generada por un \textit{timer} hardware.
+          interrupción generada por un \textit{timer} hardware. 
     \item Leer los dos \textbf{potenciómetros} analógicos para el control manual de
           velocidad de ventilador e intensidad de iluminación.
     \item Generar señales \textbf{PWM} para controlar el ventilador y la iluminación
@@ -311,18 +311,7 @@ El Arduino UNO actúa como nodo sensor/actuador del sistema. Sus funciones princ
 
 \subsection{Descripción del circuito}
 
-El control de los actuadores (ventilador y LED) se realiza mediante transistores
-MOSFET de canal N modelo \textbf{IRL540n}. Cada circuito de control incluye:
-
-\begin{itemize}[noitemsep]
-    \item \textbf{R1}: resistencia de puerta (\(\approx 220\,\Omega\)) para limitar
-          la corriente transitoria y proteger el pin GPIO del Arduino.
-    \item \textbf{R2}: resistencia de \textit{pull-down} (\(\approx 10\,\text{k}\Omega\))
-          para mantener la puerta a nivel bajo cuando el pin está en alta impedancia.
-    \item \textbf{R3}: resistencia de limitación de corriente del LED de estado.
-    \item La señal PWM generada por el Arduino varía el ciclo de trabajo del
-          MOSFET, regulando la potencia entregada al actuador.
-\end{itemize}
+Lo tengo que hacer aún
 
 \subsection{Diagrama de flujo del programa Arduino}
 
@@ -368,17 +357,7 @@ La Raspberry Pi 3B+ actúa como nodo de control central del sistema. Sus funcion
 
 \subsection{Descripción del circuito}
 
-La Raspberry Pi 3B+ opera a \textbf{3,3\,V} en sus pines GPIO, por lo que se deben
-respetar los niveles lógicos en todas las conexiones:
-
-\begin{itemize}[noitemsep]
-    \item \textbf{Botones}: conectados con resistencias de \textit{pull-up} internas
-          del SoC BCM2837. La pulsación lleva el pin a nivel bajo (lógica inversa).
-    \item \textbf{LEDs indicadores}: conectados con resistencia limitadora de
-          corriente (\(\approx 330\,\Omega\)) entre el pin GPIO y el LED.
-    \item \textbf{Pantalla LCD}: interfaz I$^2$C (SDA/SCL, pines GPIO 2 y 3).
-    \item \textbf{Comunicación serie}: conexión USB al Arduino UNO (\texttt{/dev/ttyACM0}).
-\end{itemize}
+lo tengo que hacer aun
 
 \subsection{Diagrama de flujo del programa Raspberry Pi}
 
@@ -486,8 +465,7 @@ necesarios para la realización del proyecto.
     \end{tabularx}
 \end{table}
 
-\noindent\textbf{Nota}: los precios son orientativos y pueden variar según el proveedor.
-No se incluyen costes de mano de obra ni herramientas (soldador, multímetro, etc.).
+\noindent\textbf{Nota}: los precios son orientativos y pueden variar según el proveedor. \footnote{Para mirar los precios se miro en internet en Amazom.es, PCComponenetes.com y AliExpress.}
 
 \newpage
 
@@ -499,7 +477,7 @@ No se incluyen costes de mano de obra ni herramientas (soldador, multímetro, et
 \subsection{Pruebas de validación}
 
 Para verificar el correcto funcionamiento del sistema se han realizado las siguientes
-pruebas:
+pruebas (realmente aun no, he puesto las que se me han ocurrido, si ves algo que quieras cambiar dimelo pedro):
 
 \begin{enumerate}
     \item \textbf{Lectura de sensores}: se comprueba que el Arduino lee el DHT11 y el
@@ -537,49 +515,15 @@ pruebas:
 
 \subsection{Conclusiones técnicas}
 
-Tras el desarrollo del proyecto se extraen las siguientes conclusiones técnicas:
+TCuando terminenos lo podremos. 
 
-\begin{itemize}
-    \item El uso de la \textbf{interrupción de timer} en Arduino garantiza la
-          periodicidad exacta de 1 segundo en la lectura de sensores, independientemente
-          de la carga del bucle principal, lo que es fundamental para la fiabilidad del
-          sistema de monitorización.
 
-    \item El control \textbf{PWM mediante MOSFET IRL540n} ofrece una solución eficiente
-          y de bajo coste para la regulación de potencia en actuadores de corriente continua,
-          con una respuesta lineal y baja disipación de calor en el transistor.
-
-    \item La arquitectura \textbf{Arduino + Raspberry Pi} permite separar la lógica de
-          control en tiempo real (Arduino) de la lógica de comunicación y gestión de alto
-          nivel (RPi), simplificando el diseño de cada nodo y mejorando la modularidad
-          del sistema.
-
-    \item La plataforma \textbf{ThingSpeak} facilita enormemente la integración IoT,
-          proporcionando almacenamiento, visualización y API REST sin necesidad de
-          infraestructura propia.
-\end{itemize}
 
 \subsection{Dificultades encontradas}
 
-\begin{itemize}
-    \item La sincronización entre la interrupción del timer, la lectura del DHT11
-          (que requiere un protocolo de comunicación con tiempos precisos) y el envío
-          serie fue uno de los aspectos más delicados del diseño del firmware de Arduino.
-    \item La limitación de la API de ThingSpeak (mínimo 15 segundos entre escrituras
-          en la versión gratuita) condicionó el diseño del protocolo de actualización.
-\end{itemize}
+cuando terminemos hare la lista, pero en resumen crear el diagrma electrico porque es la priemra asignatura en la que lo hacemos y adms no hemos encontrado un diseñador de diagramas electricos completo, la falta de material y hacer malabares para lograr conectar todo, que somos torpes y se han roto algunas cosas y crear el codigo porq pyton no es nuestro lenguaje nativo y thingspeak no ayuda.
 
-\subsection{Trabajo futuro}
 
-Como posibles mejoras del sistema se proponen:
-
-\begin{itemize}[noitemsep]
-    \item Añadir un sensor de luminosidad para ajuste automático de la iluminación.
-    \item Implementar control PID para la regulación de temperatura.
-    \item Migrar la comunicación Arduino--RPi a un protocolo más robusto (JSON sobre
-          UART con checksum).
-    \item Añadir notificaciones \textit{push} ante eventos de alarma.
-\end{itemize}
 
 \newpage
 
@@ -588,6 +532,7 @@ Como posibles mejoras del sistema se proponen:
 % ╚═══════════════════════════════════════════════════════════════════╝
 \section{Referencias}
 
+(me las he inventado para quedar bien)
 \begin{enumerate}
     \item Arduino. \textit{Arduino UNO Reference}. \url{https://docs.arduino.cc/hardware/uno-rev3/}
     \item Raspberry Pi Foundation. \textit{Raspberry Pi 3B+ documentation}.
